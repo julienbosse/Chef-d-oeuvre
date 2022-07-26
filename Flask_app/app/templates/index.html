@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>Butterfl.ai</title>
+
+         <!-- Bootstrap CSS CDN -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- Our Custom CSS -->
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+
+
+        <div class="wrapper">
+            <!-- Sidebar Holder -->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <h3>🦋 Butterfl.ai</h3>
+                </div>
+
+                <ul class="list-unstyled components">
+                    <p>📖 Menu</p>
+                    <li class="active">
+                        <a href="{{ url_for('index') }}">🔬 Introduction</a>
+                    </li>
+                    <!-- <li>
+                        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Pages</a>
+                        <ul class="collapse list-unstyled" id="pageSubmenu">
+                            <li><a href=" ">😁 Inversion de visages</a></li>
+                            <li><a href=" ">Filtre visage</a></li>
+                        </ul>
+                    </li> -->
+                    <li>
+                        <a href="{{ url_for('model') }}">⚙️ Modèle</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('prediction') }}">📇 Prédiction</a>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled CTAs">
+                    <li><a href=" " class="download">Source</a></li>
+                </ul>
+            </nav>
+
+            <!-- Page Content Holder -->
+            <div id="content">
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <div class="col col-lg-4"></div>
+                        <div class="col col-lg-8">
+                            <!-- <nav class="navbar navbar-default">
+                                <div class="container-fluid">
+                                    <div class="navbar-header">
+                                        <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                                            <i class="glyphicon glyphicon-align-left"></i>
+                                            <span>Menu</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </nav> -->
+            
+                            <h2>Détection de visage avec Python, OpenCv, et l'algorithme Haar Cascade</h2>
+                            <p>La détection de visage est un cas particulier de la détection d'objets. L'algorithme utilisé ici est Haar Cascade, qui est un classificateur compris dans la librairie OpenCV. Il classifie une image avec un résultat soit positif, si cette dernière contient ce que l'on cherche, soit négatif sinon.</p>
+                            <p>Dans notre cas, l'algorithme a été entrainé avec des milliers d'images comprenant des visages, et des milliers n'en contenant pas.</p>
+                            
+                            <h3>Que sont les caractéristiques Haar et comme sont-elles extraites ?</h3>
+                            <p>Pour les visages, le classificateur cherche des éléments communs à tous les visages comme les yeux, le nez, la bouche, les sourcils.</p>
+                            
+                            <div class="text-center margintb">
+                                <img src="/static/img/example_haar_features.jpeg" width="90%">
+                            </div>
+                            
+                            <p>Les caractéristiques sont des assemblages de pixels noir et blancs qui créent des motfis : bord, ligne, etc. L'agorithme compare des zones de l'images avec ces cas idéaux. La comparaison est mathématique : les pixels ont chacun une valeur qui correspond à leur luminsoté (0 pour le blanc et 1 pour le noir).</p>
+                            
+                            <h3>Terminologie</h3>
+                            
+                            <h4>1. Fenêtre glissante</h4>
+
+                            <div class="text-center margintb">
+                                <img class="mb-2 mt-2" src="/static/img/sliding.gif" width="30%">
+                            </div>
+
+                            <p>La fenêtre glissante est une zone carrée qui se déplace petit à petit sur toute l'image. A chaque fois, le classifcateur est appliqué sur la zone définie par la fenêtre, qui détecte si la région contient les caractéristiques Haar d'un visage.</p>
+
+                            <h4>2. Pyramide d'image et facteur d'échelle</h4>
+
+                            <div class="text-center margintb">
+                                <img class="mb-2 mt-2" src="/static/img/pyramide.jpg" width="90%">
+                            </div>
+
+                            <p>Le classifacateur ayant été entraîné avec des visages de taille fixe, comment faire si notre image contient des visages de tailles différentes ? La solution est le <b>facteur d'échelle</b>. L'algorithme va redimensionner l'image en fonction de ce paramètre, et chercher des visages plus ou moins grands.</p>
+            
+
+                            <p>Voici à quoi ressemble la fenêtre glissante combinée à la pyramide d'images. </p>
+            
+                            <h4>3. Méthode de la cascade</h4>
+
+                            <p>Souvent, la majorité d'une image ne contient aucun visage. Rechercher toutes les caractéristiques Haar d'un visage sur une telle zone serait donc une perte de temps. C'est ici qu'intervient la <b>cascade</b>. Le classificateur fait intervenir plusieurs étapes, et les caractéristiques Haar sont régroupées en plusieurs étages.</p>
+                            <p>A chaque fois le fenêtre se déplace, la comparaison entre l'image et les caractéristiques Haar se fait étape par étape. Si la fenêtre échoue à la première comparaison, le classifacateur considère qu'il n'y aucun visage dedans. Faire la comparaison avec les caractéristiques restantes est donc inutile et il peut passer à la fenêtre suivante.</p>
+
+                            <div class="text-center margintb">
+                                <img class="mb-2 mt-2" src="/static/img/cascade.jpg" width="90%">
+                            </div>
+
+                            <h3>Paramètres</h3>
+
+                            <h4>1. Taille minimum : minSize</h4>
+
+                            <p>C'est la taille de la fenêtre [minSize x minSize]. La taille du visage à détecter doit donc être au moins aussi grande.</p>
+
+                            <h4>2. Nombre minimum de voisins : minNeighbor</h4>
+                            
+                            <p>C'est le nombre minimum de détection positives requises pour détecter un visages (pour 2 échelles différentes, un même visage est détecté 2 fois).</p>
+            
+                            <div class="line"></div>
+            
+                            <h3 class="mt-5">Détection du visage et des yeux</h3>
+                            
+                            <div class="text-center margintb">
+                                <img class="img-rounded" src=" " width="70%">
+                            </div>
+                            
+            
+                            <div class="line"></div>
+            
+                        </div>
+                        <div class="col col-lg-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- jQuery CDN -->
+         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+         <!-- Bootstrap Js CDN -->
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+         <script type="text/javascript">
+             $(document).ready(function () {
+                 $('#sidebarCollapse').on('click', function () {
+                     $('#sidebar').toggleClass('active');
+                 });
+             });
+         </script>
+    </body>
+</html>
