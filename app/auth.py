@@ -71,9 +71,9 @@ def signup_post():
 @login_required
 def logout():
     logout_user()
-    list_models = os.listdir('app/static/models')
+    list_models = os.listdir('app/static/models_nlp')
     list_models.remove('nlp_model')
     # delete models
     for model in list_models:
-        os.remove(os.path.join('app/static/models', model))
+        os.remove(os.path.join('app/static/models_nlp', model))
     return redirect(url_for('main.index'))
