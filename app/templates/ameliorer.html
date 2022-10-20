@@ -1,0 +1,64 @@
+<!-- templates/ameliorer.html -->
+
+{% extends "base.html" %}
+{% set active_page = 'avis' -%}
+
+{% block content %}
+<h2>Analyse de langage</h2>
+                
+<p>
+    Pour améliorer le modèle, veuillez choisir un fichier json contenant des avis en anglais, ainsi que leur étiquette (1 ou 0). Le fichier doit respecter le <a style="font-weight:600; text-decoration: underline;" href="" data-toggle="modal" data-target="#exampleModal" >bon format</a>.
+    
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Formet du fichier json</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="json-text">
+                    { <br>
+                    &emsp; &emsp; "0": { <br>
+                    &emsp; &emsp; &emsp; &emsp; "text": "Exemple d'avis positif", <br>
+                    &emsp; &emsp; &emsp; &emsp; "label": 1 <br>
+                    &emsp; &emsp; }, <br>
+                    &emsp; &emsp; "1": { <br>
+                    &emsp; &emsp; &emsp; &emsp; "text": "Exemple d'avis négatif", <br>
+                    &emsp; &emsp; &emsp; &emsp; "label": 0 <br>
+                    &emsp; &emsp; } <br>
+                    } <br>
+                </p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</p>
+
+<form method="POST" enctype=multipart/form-data>
+        <div class="mb-3">
+            <input class="form-control" type="file" id="formFile" name="file" accept=".json">
+            <br>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </div>
+</form>
+<br>
+<p class="retour"><a href="{{ url_for('main.avis') }}" ><button class="btn btn-secondary">Retour</button></a></p>
+
+<div class="line"></div>
+
+{% endblock %}
+
+<script>
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+</script>
+        

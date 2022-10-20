@@ -1,0 +1,32 @@
+<!-- templates/avis.html -->
+
+{% extends "base.html" %}
+{% set active_page = 'avis' -%}
+
+{% block content %}
+
+<h2 style='width:15em'>Analyse de langage</h2>
+
+<form method="POST">
+    <div class="form-group">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="inputGroupSelect01">Modèle</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01" name="model_name">
+              {% for o in list_models %}
+                <option value="{{ o }}">{{ o }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <textarea class="form-control" name="avis" rows="3" placeholder="Avis"></textarea>
+        <small id="emailHelp" class="form-text text-muted">In English please.</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+</form>
+<br>
+<p class="retour"><a href="{{ url_for('main.ameliorer') }}" ><button class="btn btn-secondary">Je souhaite améliorer le modèle</button></a></p>
+
+<div class="line"></div>
+
+{% endblock %}

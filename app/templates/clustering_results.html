@@ -1,0 +1,230 @@
+<!-- templates/clustering.html -->
+
+{% extends "base.html" %}
+{% set active_page = 'clustering' -%}
+
+{% block content %}
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+
+        var parsed = JSON.parse('{{data | tojson}}'); // Récupérer la data Python en json
+        var data_google = {}
+
+        for(n_cluster in parsed) { // Boucler sur les clusters
+
+            var dict_cluster = parsed[n_cluster.toString()];
+            data_google[n_cluster] = {}
+            
+            for(key in dict_cluster) { // Créer les données au format google pour chaque graph
+                if(key != 'total' && key != 'types') {
+
+                    var data_table = new google.visualization.DataTable();
+                    
+                    data_table.addColumn(dict_cluster['types'][key], key);
+                    data_table.addColumn('number', 'number');
+
+                    for(i = 0; i < dict_cluster[key].length; i++){
+                        data_table.addRow([dict_cluster[key][i][0], dict_cluster[key][i][1]]);
+                    }
+
+                    data_google[n_cluster][key] = data_table
+                }
+            }
+        }           
+
+        var pichartOptions = {
+            is3D: false,
+            pieStartAngle: 100,
+            pieSliceBorderColor: 'transparent',
+            backgroundColor: 'transparent',
+            legend: { 
+                textStyle: {
+                    fontSize: 11,
+                    color: 'white',
+                    fontName: 'Montserrat'
+                },
+                position: 'none'
+            },
+            pieSliceText: 'label',
+            width: 178,
+        }
+
+        var histogramchartOptions = {
+            is3D:false,
+            backgroundColor: 'transparent',
+            legend: { 
+                textStyle: {
+                    fontSize: 11,
+                    color: 'white',
+                    fontName: 'Montserrat'
+                },
+                position: 'none'
+            },
+            width: 220,
+            colors:['white'],
+            hAxis:{
+                textStyle:{
+                    color: 'white',
+                    fontName: 'Montserrat'
+                },
+                showTextEvery:2
+            },
+            vAxis:{
+                textStyle:{
+                    color: 'white',
+                    fontName: 'Montserrat'
+                }
+            },
+            bar:{
+                groupWidth: '90%'
+            }
+
+        }
+
+        for (key in data_google) { // Dessiner les graphs dans les divs correspondantes aux ids
+
+            const array_pies = ['genre', 'age', 'revenus', 'localisation']
+            array_pies.forEach(function (item, index){
+                console.log(item)
+                var chart = new google.visualization.PieChart(document.getElementById(key.concat(item)));
+                chart.draw(data_google[key][item], pichartOptions);
+            });
+
+            const array_hist = ['ca', 'commandes', 'clients', 'panier_moyen', 'prix_moyen_article', 'nb_articles_moyen', 'frequence']
+            array_hist.forEach(function (item, index){
+                console.log(item)
+                var chart = new google.visualization.Histogram(document.getElementById(key.concat(item)));
+                chart.draw(data_google[key][item], histogramchartOptions);
+            });
+        }
+    }
+    
+</script>
+
+<div>
+    <h2 style="width:1000px; text-align: center">
+    Clustering results
+    </h2>
+
+    <div id="carouselExampleIndicators" class="carousel slide gradient-custom" data-ride="carousel" data-interval="false" style="text-align: center; border-radius: 20px;">
+        <ol class="carousel-indicators">
+            {% for cluster in data.keys() %}
+                {% if loop.index == 1 %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index - 1}}" class="active"></li>
+                {% else %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index - 1}}"></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+        <div class="carousel-inner" style="text-align: center; width: 1000px">
+
+            {% for cluster in data.keys() %}
+
+                <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-1" style="text-align:center">
+                                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </div>
+                            <div class="col-10">
+                                <div class="row justify-content-center">
+                                    <div style="font-size: 1.1em; font-weight: 600; color: rgb(255, 255, 255); padding: 10px;">
+                                        Cluster {{ loop.index }}
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div style="font-size: 1.1em; font-weight: 600; color: rgb(143, 230, 215); padding: 10px; font-style: italic;">
+                                        Caractéristiques sociaux-démographiques
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col">
+                                        <h3>Genre</h3>
+                                        <div id="{{ cluster }}genre"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Age</h3>
+                                        <div id="{{ cluster }}age"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Localisation</h3>
+                                        <div id="{{ cluster }}revenus"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Revenus</h3>
+                                        <div id="{{ cluster }}localisation"></div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row justify-content-center">
+                                    <div style="font-size: 1.1em; font-weight: 600; color: rgb(143, 230, 215); padding: 10px; font-style: italic;">
+                                        Comportements d'achat
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col">
+                                        <h3>Chiffre d'affaires</h3>
+                                        <div id="{{ cluster }}ca" class="justify-content-center"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Nb de commandes</h3>
+                                        <div id="{{ cluster }}commandes" class="justify-content-center"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Nombre de clients</h3>
+                                        <div id="{{ cluster }}clients"></div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row justify-content-center">
+                                    <div class="col">
+                                        <h3>Panier moyen</h3>
+                                        <div id="{{ cluster }}panier_moyen"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Prix moyen d'article</h3>
+                                        <div id="{{ cluster }}prix_moyen_article"></div>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Nb moyen d'articles</h3>
+                                        <div id="{{ cluster }}nb_articles_moyen" class="justify-content-center"></div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row justify-content-center">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col">
+                                        <h3>Fréquence d'achat</h3>
+                                        <div id="{{ cluster }}frequence"></div>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+                            <div class="col-1" style="text-align:center">
+                                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+        
+        
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+<!-- templates/result_avis.html -->
+
+{% extends "base.html" %}
+{% set active_page = 'avis' -%}
+
+{% block content %}
+<h2 style='width:15em'>Analyse de langage</h2>
+
+<div>
+   " {{ text }} "
+   <br>
+   <p> - </p>
+   {% if maru %}
+    <p style="color: rgb(18, 141, 18); font-weight: 600;"> Recommande </p>
+    {% endif %}
+
+    {% if not maru %}
+    <p style="color: rgb(228, 77, 77); font-weight: 600;"> Ne recommande pas</p>
+    {% endif %}
+</div>
+
+<p class="retour">
+    <a href="{{ url_for('main.avis') }}" ><button class="btn btn-secondary">Retour</button></a>
+</p>
+
+<div class="line"></div>
+
+{% endblock %}

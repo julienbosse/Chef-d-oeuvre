@@ -1,0 +1,245 @@
+<!-- templates/clustering.html -->
+
+{% extends "base.html" %}
+{% set active_page = 'clustering' -%}
+
+{% block content %}
+
+<script type="text/javascript">
+
+  function fix_KMeans() {
+    document.getElementById('n_clusters_Kmeans_input').disabled = !document.getElementById('n_clusters_Kmeans_input').disabled;
+    document.getElementById('n_clusters_Kmeans_slider').disabled = !document.getElementById('n_clusters_Kmeans_slider').disabled;;
+  }
+
+  function fix_DBSCAN() {
+    document.getElementById('max_epsilon_DBSCAN_input').disabled = !document.getElementById('max_epsilon_DBSCAN_input').disabled;
+    document.getElementById('max_epsilon_DBSCAN_slider').disabled = !document.getElementById('max_epsilon_DBSCAN_slider').disabled;
+    document.getElementById('min_samples_DBSCAN_input').disabled = !document.getElementById('min_samples_DBSCAN_input').disabled;
+    document.getElementById('min_samples_DBSCAN_slider').disabled = !document.getElementById('min_samples_DBSCAN_slider').disabled;
+  }
+
+  function fix_SOM() {
+    document.getElementById('dim_SOM_1').disabled = !document.getElementById('dim_SOM_1').disabled;
+    document.getElementById('dim_SOM_2').disabled = !document.getElementById('dim_SOM_2').disabled;
+    document.getElementById('sigma_SOM_range').disabled = !document.getElementById('sigma_SOM_range').disabled;
+    document.getElementById('sigma_SOM_number').disabled = !document.getElementById('sigma_SOM_number').disabled;
+  }
+
+  function kmeans_checked() {
+    document.getElementById('n_clusters_Kmeans_input').disabled = false;
+    document.getElementById('n_clusters_Kmeans_slider').disabled = false;
+    document.getElementById('check_Kmeans').disabled = false;
+    document.getElementById("form_Kmeans").classList.add('gradient-custom-transparent2');
+    document.getElementById("form_Kmeans").classList.remove('gradient-custom-transparent');
+
+    document.getElementById('max_epsilon_DBSCAN_input').disabled = true;
+    document.getElementById('max_epsilon_DBSCAN_slider').disabled = true;
+    document.getElementById('min_samples_DBSCAN_input').disabled = true;
+    document.getElementById('min_samples_DBSCAN_slider').disabled = true;
+    document.getElementById('check_DBSCAN').disabled = true;
+    document.getElementById('check_DBSCAN').value = false;
+    document.getElementById("form_DBSCAN").classList.add('gradient-custom-transparent');
+    document.getElementById("form_DBSCAN").classList.remove('gradient-custom-transparent2');
+    
+    document.getElementById('dim_SOM_1').disabled = true;
+    document.getElementById('dim_SOM_2').disabled = true;
+    document.getElementById('sigma_SOM_range').disabled = true;
+    document.getElementById('sigma_SOM_number').disabled = true;
+    document.getElementById('check_SOM').disabled = true;
+    document.getElementById('check_SOM').value = false;
+    document.getElementById("form_SOM").classList.add('gradient-custom-transparent');
+    document.getElementById("form_SOM").classList.remove('gradient-custom-transparent2');
+  }
+
+  function dbscan_checked() {
+    document.getElementById('n_clusters_Kmeans_input').disabled = true;
+    document.getElementById('n_clusters_Kmeans_slider').disabled = true;
+    document.getElementById('check_Kmeans').disabled = true;
+    document.getElementById("form_Kmeans").classList.add('gradient-custom-transparent');
+    document.getElementById("form_Kmeans").classList.remove('gradient-custom-transparent2');
+
+    document.getElementById('max_epsilon_DBSCAN_input').disabled = false;
+    document.getElementById('max_epsilon_DBSCAN_slider').disabled = false;
+    document.getElementById('min_samples_DBSCAN_input').disabled = false;
+    document.getElementById('min_samples_DBSCAN_slider').disabled = false;
+    document.getElementById('check_DBSCAN').disabled = false;
+    document.getElementById("form_DBSCAN").classList.add('gradient-custom-transparent2');
+    document.getElementById("form_DBSCAN").classList.remove('gradient-custom-transparent');
+
+    document.getElementById('dim_SOM_1').disabled = true;
+    document.getElementById('dim_SOM_2').disabled = true;
+    document.getElementById('sigma_SOM_range').disabled = true;
+    document.getElementById('sigma_SOM_number').disabled = true;
+    document.getElementById('check_SOM').disabled = true;
+    document.getElementById("form_SOM").classList.add('gradient-custom-transparent');
+    document.getElementById("form_SOM").classList.remove('gradient-custom-transparent2');
+  }
+
+  function som_checked() {
+    document.getElementById('n_clusters_Kmeans_input').disabled = true;
+    document.getElementById('n_clusters_Kmeans_slider').disabled = true;
+    document.getElementById('check_Kmeans').disabled = true;
+    document.getElementById("form_Kmeans").classList.add('gradient-custom-transparent');
+    document.getElementById("form_Kmeans").classList.remove('gradient-custom-transparent2');
+
+    document.getElementById('max_epsilon_DBSCAN_input').disabled = true;
+    document.getElementById('max_epsilon_DBSCAN_slider').disabled = true;
+    document.getElementById('min_samples_DBSCAN_input').disabled = true;
+    document.getElementById('min_samples_DBSCAN_slider').disabled = true;
+    document.getElementById('check_DBSCAN').disabled = true;
+    document.getElementById("form_DBSCAN").classList.add('gradient-custom-transparent');
+    document.getElementById("form_DBSCAN").classList.remove('gradient-custom-transparent2');
+
+    document.getElementById('dim_SOM_1').disabled = false;
+    document.getElementById('dim_SOM_2').disabled = false;
+    document.getElementById('sigma_SOM_range').disabled = false;
+    document.getElementById('sigma_SOM_number').disabled = false;
+    document.getElementById('check_SOM').disabled = false;
+    document.getElementById("form_SOM").classList.add('gradient-custom-transparent2');
+    document.getElementById("form_SOM").classList.remove('gradient-custom-transparent');
+  }
+
+</script>
+
+<h2>
+  Clustering
+</h2>
+
+
+
+<form method="POST">
+  <!-- ------------------------------------------------------- Kmeans ----------------------------------------------------------------------------------- -->
+  <div class="gradient-custom-transparent2 models-forms" id="form_Kmeans">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="form-check" name="custom1" id="custom1">
+          <input onclick=kmeans_checked() class="form-check-input" type="radio" name="radios" id="bool_Kmeans" value="kmeans" checked>
+          <label class="form-check-label title-cluster" for="bool_Kmeans">
+            K-Means
+          </label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-check" style="text-align: right;">
+          <input class="form-check-input" type="checkbox" id="check_Kmeans" name="check_Kmeans" onclick=fix_KMeans()>
+          <label class="form-check-label" for="check_Kmeans">
+            Modèle pré-entrainé
+          </label>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div>
+      <label for="customRange2" class="form-label">Nombre de clusters</label>
+      <div class="row">
+        <div class="col">
+          <input type="range" class="form-range w-100 align-bottom" min="0" max="20" step="1" id="n_clusters_Kmeans_slider" name="n_clusters_Kmeans_slider" oninput="document.getElementById('n_clusters_Kmeans_input').value = this.value">
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" id="n_clusters_Kmeans_input" name="n_clusters_Kmeans_input" placeholder="10" oninput="document.getElementById('n_clusters_Kmeans_slider').value = this.value">
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <!-- ------------------------------------------------------- DBSCAN ----------------------------------------------------------------------------------- -->
+  <div class="gradient-custom-transparent models-forms" id="form_DBSCAN">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="form-check" name="custom2" id="custom2">
+          <input onclick=dbscan_checked() class="form-check-input" type="radio" name="radios" id="bool_DBSCAN" value="dbscan">
+          <label class="form-check-label title-cluster" for="bool_DBSCAN">
+            DBSCAN
+          </label>
+        </div>
+      </div>
+      <br>
+      <div class="col">
+        <div class="form-check" style="text-align: right;">
+          <input class="form-check-input" type="checkbox" id="check_DBSCAN" name="check_DBSCAN" onclick=fix_DBSCAN() disabled>
+          <label class="form-check-label" for="check_DBSCAN">
+            Modèle pré-entrainé
+          </label>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div>
+      <label for="customRange2" class="form-label">N_min</label>
+      <div class="row">
+        <div class="col">
+          <input type="range" class="form-range w-100 align-bottom" min="0" max="20" step="1" id="min_samples_DBSCAN_slider" name="min_samples_DBSCAN_slider" oninput="document.getElementById('min_samples_DBSCAN_input').value = this.value" disabled>
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" id="min_samples_DBSCAN_input" name="min_samples_DBSCAN_input" placeholder="10" oninput="document.getElementById('min_samples_DBSCAN_slider').value = this.value" disabled>
+        </div>
+      </div>
+      <label for="customRange2" class="form-label">Epsilon</label>
+      <div class="row">
+        <div class="col">
+          <input type="range" class="form-range w-100 align-bottom" min="0" max="2" step="0.01" id="max_epsilon_DBSCAN_slider" name="max_epsilon_DBSCAN_slider" oninput="document.getElementById('max_epsilon_DBSCAN_input').value = this.value" disabled>
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" step="0.01" id="max_epsilon_DBSCAN_input" name="max_epsilon_DBSCAN_input" placeholder="1" oninput="document.getElementById('max_epsilon_DBSCAN_slider').value = this.value" disabled>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <!-- ------------------------------------------------------- SOM ----------------------------------------------------------------------------------- -->
+  <div class="gradient-custom-transparent models-forms" id="form_SOM">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="form-check" name="custom3" id="custom3">
+          <input onclick=som_checked() class="form-check-input" type="radio" name="radios" id="bool_SOM" value="som">
+          <label class="form-check-label title-cluster" for="bool_SOM">
+            SOM
+          </label>
+        </div>
+      </div>
+      <br>
+      <div class="col">
+        <div class="form-check" style="text-align: right;">
+          <input class="form-check-input" type="checkbox" id="check_SOM" name="check_SOM" onclick=fix_SOM() disabled>
+          <label class="form-check-label" for="check_SOM">
+            Modèle pré-entrainé
+          </label>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div>
+      <label for="customRange2" class="form-label">Dimensions</label>
+      <div class="row align-items-center">
+        <div class="col-2" style="text-align: right; vertical-align: sub;">
+          x
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="dim_SOM_1" name="dim_SOM_1" placeholder="1" disabled>
+        </div>
+        <div class="col-2" style="text-align: right; vertical-align: sub;">
+          y
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="dim_SOM_2" name="dim_SOM_2" placeholder="1" disabled>
+        </div>
+      </div>
+      <br>
+      <label for="customRange2" class="form-label">Sigma</label>
+      <div class="row">
+        <div class="col">
+          <input type="range" class="form-range w-100 align-bottom" min="0" max="2" step="0.01" id="sigma_SOM_range" name="sigma_SOM_range" oninput="document.getElementById('sigma_SOM_number').value = this.value" disabled>
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" step="0.01" id="sigma_SOM_number" name="sigma_SOM_number" placeholder="1" oninput="document.getElementById('sigma_SOM_range').value = this.value" disabled>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <button type="submit" class="btn btn-primary gradient-custom">Envoyer</button>
+</div>
+
+</form>
+{% endblock %}
