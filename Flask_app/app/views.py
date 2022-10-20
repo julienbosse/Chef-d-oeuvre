@@ -1,7 +1,7 @@
 from flask import render_template, request, abort, redirect, url_for, Flask, Response
 from app import app
 from app import models
-from .models import process_text
+from .models import clean_text, get_prediction
 
 
 
@@ -22,7 +22,9 @@ def avis():
 @app.route('/avis', methods=['POST'])
 def process_text_from_form():
     text = request.form['avis']
-    processed_text = process_text(text)
-    print(processed_text)
-    return render_template('avis.html')
+    cleaned_text = clean_text(text)
+    pred = get_prediction(cleaned_text)
 
+    maru = True if pred==1 else 0
+
+    return render_template('result_avis.html', maru = maru)

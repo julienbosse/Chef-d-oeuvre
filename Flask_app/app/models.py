@@ -2,6 +2,7 @@ import numpy as np
 import time
 import re
 from nltk.corpus import stopwords
+import pickle
 
 
 # Cleaning function
@@ -53,3 +54,14 @@ def process_text(text):
     text = text.upper()
 
     return text
+
+def get_prediction(cleaned_text):
+
+    with open('app/static/models/nlp_model', 'rb') as f:
+        count_vec, tfidf_transformer, clf = pickle.load(f)
+
+    text_count = count_vec.transform([cleaned_text])
+    text_tfidf = tfidf_transformer.transform(text_count)
+    pred = clf.predict(text_tfidf)[0]
+
+    return pred
